@@ -45,7 +45,7 @@ const server = net.createServer((socket) => {
       if (path.startsWith('/files/')) {
         const directory = process.argv[3];
         const filename = path.slice(7);
-        const requestBody = request.split('\r\n\r\n')[0];
+        const requestBody = request.split('\r\n\r\n')[1];
         fs.writeFileSync(
           `${directory}/${filename}`, requestBody
         );
