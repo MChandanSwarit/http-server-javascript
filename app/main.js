@@ -16,21 +16,23 @@ const server = net.createServer((socket) => {
     const [requestLine] = request.split('\r\n');
     const [method, path] = requestLine.split(' ');
 
-    let response = "HTTP/1.1 404 Not Found\r\n\r\n";
+    const response = path === '/' ? '200 OK' : '404 Not Found';
+
+    socket.write(`HTTP/1.1 ${response}\r\n\r\n`);
 
     if (method === 'GET') {
-      if (path.startsWith('/echo/')) {
-        const message = path.slice(6);
-        response = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${message.length}\r\n\r\n${message}`;
-        socket.write(response);
-      } else if (path.startsWith('/')) {
-        response = `HTTP/1.1 200 OK\r\n\r\n`;
-        socket.write(response);
+      if (path === '/') {
+        socket.write('HTTP/1.1 200 OK\r\n\r\n');
+      } else if (path.startsWith('/echo/')) {
+        const content = path.slice(6);
+        socket.write(
+          `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+        );
+      } else {
+        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
       }
-      socket.write(response);
     }
   });
-
   socket.on('close', () => {
     socket.end();
   });
