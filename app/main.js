@@ -9,9 +9,7 @@ const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     const request = data.toString();
 
-    const [requestLine, host, userAgent, accept, contentType, contentLength, requestBody] = request.split('\r\n');
-
-    const [method, path] = requestLine.split(' ');
+    const [method, path] = request.split('\r\n')[0].split(' ');
 
     if (method === 'GET') {
       if (path === '/') {
@@ -22,7 +20,7 @@ const server = net.createServer((socket) => {
           `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
         );
       } else if (path.startsWith('/user-agent')) {
-        const content = userAgent.slice(12);
+        const content = request.split('\r\n')[2].slice(12);
         socket.write(
           `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
         );
@@ -45,17 +43,20 @@ const server = net.createServer((socket) => {
       }
     } else {
       socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
-    };
+    }
 
     if (method === 'POST') {
       if (path.startsWith('/files/')) {
         const directory = process.argv[3];
         const filename = path.slice(7);
-        const body = requestBody;
-        fs.writeFileSync(`${directory}/${filename}`);
-        socket.write('HTTP/1.1 201 CREATED\r\n\r\n');
-      } else {
-        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+        const requestBody = request.split('\r\n\r\n')[1];
+
+        if (requestBody) {
+          fs.writeFileSync(`${directory}/${filename}`, requestBody);
+          socket.write('HTTP/1.1 201 Created\r\n\r\n');
+        } else {
+          socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+        }
       }
     } else {
       socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
