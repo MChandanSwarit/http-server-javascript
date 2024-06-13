@@ -18,8 +18,6 @@ const server = net.createServer((socket) => {
 
     const response = path === '/' ? '200 OK' : '404 Not Found';
 
-    socket.write(`HTTP/1.1 ${response}\r\n\r\n`);
-
     if (method === 'GET') {
       if (path === '/') {
         socket.write('HTTP/1.1 200 OK\r\n\r\n');
