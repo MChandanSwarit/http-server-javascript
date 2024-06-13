@@ -48,7 +48,7 @@ const server = net.createServer((socket) => {
     if (method === 'POST') {
       if (path.startsWith('/files/')) {
         const directory = process.argv[3];
-        const filename = path.slice(7);
+        const filename = path.slice(10);
         const requestBody = request.split('\r\n\r\n')[0];
 
         if (requestBody) {
