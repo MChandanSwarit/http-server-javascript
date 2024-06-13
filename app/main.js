@@ -40,6 +40,8 @@ const server = net.createServer((socket) => {
         } else {
           socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
         }
+      } else if (path.startsWith('/')) {
+        socket.write('HTTP/1.1 200 OK\r\n\r\n');
       }
     } else {
       socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
