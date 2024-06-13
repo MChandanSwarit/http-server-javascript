@@ -9,7 +9,7 @@ const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     const request = data.toString();
 
-    const [requestLine, host, userAgent, accept] = request.split('\r\n');
+    const [requestLine, host, userAgent, accept, contentType, contentLength, requestBody] = request.split('\r\n');
 
     const [method, path] = requestLine.split(' ');
 
@@ -44,8 +44,22 @@ const server = net.createServer((socket) => {
         socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
       }
     } else {
-      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
     };
+
+    if (method === 'POST') {
+      if (path.startsWith('/files/')) {
+        const directory = process.argv[3];
+        const filename = path.slice(7);
+        const body = requestBody;
+        fs.writeFileSync(`${directory}/${filename}`);
+        socket.write('HTTP/1.1 201 CREATED\r\n\r\n');
+      } else {
+        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      }
+    } else {
+      socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
+    }
   });
 
   socket.on('close', () => {
