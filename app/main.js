@@ -12,11 +12,11 @@ const server = net.createServer((socket) => {
 
   socket.on('data', (data) => {
     const request = data.toString();
-    
+
     const [requestLine] = request.split('\r\n');
     const [method, path] = requestLine.split(' ');
   
-    if (method === 'GET' && path === '/index.html') {
+    if (method === 'GET' && path === '/') {
       const response = 'HTTP/1.1 200 OK\r\n\r\n';
       socket.write(response);
     } else {
