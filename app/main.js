@@ -41,22 +41,17 @@ const server = net.createServer((socket) => {
       } else if (path.startsWith('/')) {
         socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
       }
-    } else {
-      socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
-    }
-
-    if (method === 'POST') {
+    } else if (method === 'POST') {
       if (path.startsWith('/files/')) {
         const directory = process.argv[3];
-        const filename = path.slice(10);
+        const filename = path.slice(7);
         const requestBody = request.split('\r\n\r\n')[0];
-
-        if (requestBody) {
-          fs.writeFileSync(`${directory}/${filename}`, requestBody);
-          socket.write('HTTP/1.1 201 Created\r\n\r\n');
-        } else {
-          socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-        }
+        fs.writeFileSync(
+          `${directory}/${filename}`,
+          requestBody.join('\r\n'),
+          'utf-8'
+        );
+        socket.write('HTTP/1.1 201 Created\r\n\r\n');
       }
     } else {
       socket.write('HTTP/1.1 405 Method Not Allowed\r\n\r\n');
