@@ -22,6 +22,10 @@ const server = net.createServer((socket) => {
         const response = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${message.length}\r\n\r\n${message}`;
         socket.write(response);
       }
+      else if (path.startsWith('/')) {
+        const message = path.slice(1);
+        const response = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${message.length}\r\n\r\n${message}`;
+      }
     } else {
       const response = 'HTTP/1.1 404 Not Found\r\n\r\n';
       socket.write(response);
