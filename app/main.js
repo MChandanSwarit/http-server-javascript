@@ -47,9 +47,7 @@ const server = net.createServer((socket) => {
         const filename = path.slice(7);
         const requestBody = request.split('\r\n\r\n')[0];
         fs.writeFileSync(
-          `${directory}/${filename}`,
-          requestBody.join('\r\n'),
-          'utf-8'
+          `${directory}/${filename}`, requestBody
         );
         socket.write('HTTP/1.1 201 Created\r\n\r\n');
       }
