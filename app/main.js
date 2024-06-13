@@ -16,18 +16,17 @@ const server = net.createServer((socket) => {
     const str = 'abc';
 
     const [requestLine] = request.split('\r\n');
-    const [method, path] = requestLine.split(' ');
-  
-    if (method === 'GET' && path === `/echo/${str}`) {
-      const response = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\n${str}`;
+    const req = requestLine.split(' ');
+
+    if (req[0] === 'GET' && req[1] === '/echo/abc') {
+      const response =
+        'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\nabc';
       socket.write(response);
     } else {
       const response = 'HTTP/1.1 404 Not Found\r\n\r\n';
       socket.write(response);
     }
-  
   });
-
 
   socket.on('close', () => {
     socket.end();
