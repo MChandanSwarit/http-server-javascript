@@ -10,16 +10,22 @@ const server = net.createServer((socket) => {
   //   socket.write(response);
   // });
 
-  const [requestLine] = request.split('\r\n');
-  const [method, path] = requestLine.split(' ');
+  socket.on('data', (data) => {
+    const request = data.toString();
+    
+    const [requestLine] = request.split('\r\n');
+    const [method, path] = requestLine.split(' ');
+  
+    if (method === 'GET' && path === '/index.html') {
+      const response = 'HTTP/1.1 200 OK\r\n\r\n';
+      socket.write(response);
+    } else {
+      const response = 'HTTP/1.1 404 Not Found\r\n\r\n';
+      socket.write(response);
+    }
+  
+  });
 
-  if (method === 'GET' && path === '/index.html') {
-    const response = 'HTTP/1.1 200 OK\r\n\r\n';
-    socket.write(response);
-  } else {
-    const response = 'HTTP/1.1 404 Not Found\r\n\r\n';
-    socket.write(response);
-  }
 
   socket.on('close', () => {
     socket.end();
