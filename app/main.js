@@ -1,5 +1,6 @@
 const net = require('net');
 const fs = require('fs');
+const zlib = require('zlib');
 
 const server = net.createServer((socket) => {
   socket.on('data', (data) => {
@@ -15,32 +16,21 @@ const server = net.createServer((socket) => {
       } else if (path.startsWith('/echo/')) {
         // path starts with '/echo/'
         const content = path.slice(6);
+        const content_gzipped = zlib.gzipSync(content);
         const content_encoding = request
           .split('\r\n')[2]
           .slice(17)
           .split(',')
           .map((s) => s.trim());
-        // if (content_encoding !== 'invalid-encoding') {
-        //   socket.write(
-        //     `HTTP/1.1 200 OK\r\nContent-Encoding: ${content_encoding}\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
-        //   );
-        // } else {
-        //   socket.write(
-        //     `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n${content}`
-        //   );
-        // }
         if (content_encoding.includes('gzip')) {
           socket.write(
-            `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+            `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content_gzipped.length}\r\n\r\ngzip-encoded-data`
           );
         } else {
           socket.write(
             `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n${content}`
           );
         }
-        socket.write(
-          `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
-        );
       } else if (path.startsWith('/user-agent')) {
         // path starts with '/user-agent'
         const content = request.split('\r\n')[2].slice(12);
