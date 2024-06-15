@@ -15,7 +15,11 @@ const server = net.createServer((socket) => {
       } else if (path.startsWith('/echo/')) {
         // path starts with '/echo/'
         const content = path.slice(6);
-        const content_encoding = request.split('\r\n')[2].slice(17).split(',');
+        const content_encoding = request
+          .split('\r\n')[2]
+          .slice(17)
+          .split(',')
+          .map((s) => s.trim());
         // if (content_encoding !== 'invalid-encoding') {
         //   socket.write(
         //     `HTTP/1.1 200 OK\r\nContent-Encoding: ${content_encoding}\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
