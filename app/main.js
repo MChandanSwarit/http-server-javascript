@@ -29,7 +29,7 @@ const server = net.createServer((socket) => {
           socket.write(content_gzipped);
         } else {
           socket.write(
-            `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n${content}`
+            `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
           );
         }
       } else if (path.startsWith('/user-agent')) {
