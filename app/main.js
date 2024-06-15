@@ -15,10 +15,19 @@ const server = net.createServer((socket) => {
       } else if (path.startsWith('/echo/')) {
         // path starts with '/echo/'
         const content = path.slice(6);
-        const content_encoding = request.split('\r\n')[2].slice(17);
-        if (content_encoding !== 'invalid-encoding') {
+        const content_encoding = request.split('\r\n')[2].slice(17).split(',');
+        // if (content_encoding !== 'invalid-encoding') {
+        //   socket.write(
+        //     `HTTP/1.1 200 OK\r\nContent-Encoding: ${content_encoding}\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+        //   );
+        // } else {
+        //   socket.write(
+        //     `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n${content}`
+        //   );
+        // }
+        if (content_encoding.includes('gzip')) {
           socket.write(
-            `HTTP/1.1 200 OK\r\nContent-Encoding: ${content_encoding}\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+            `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
           );
         } else {
           socket.write(
