@@ -1,0 +1,11 @@
+{
+    "name": "javascript-http-server",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "dev": "node app/main.js"
+    },
+    "author": "MChandanSwarit",
+    "license": "MIT",
+    "dependencies": {}
+}
