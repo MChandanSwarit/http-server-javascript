@@ -12,20 +12,28 @@ const handleGetRequest = (socket, path, headers) => {
     // Respond with the text after '/echo/' path
     const content = path.slice(6);
     const content_gzipped = zlib.gzipSync(content); // Compress content
-    const acceptEncoding = headers['accept-encoding'] ? headers['accept-encoding'].split(',').map(s => s.trim()) : [];
+    const acceptEncoding = headers['accept-encoding']
+      ? headers['accept-encoding'].split(',').map((s) => s.trim())
+      : [];
 
     if (acceptEncoding.includes('gzip')) {
       // Respond with gzipped content if client accepts gzip encoding
-      socket.write(`HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content_gzipped.length}\r\n\r\n`);
+      socket.write(
+        `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content_gzipped.length}\r\n\r\n`
+      );
       socket.write(content_gzipped);
     } else {
       // Respond with plain text content if client does not accept gzip encoding
-      socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`);
+      socket.write(
+        `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+      );
     }
   } else if (path.startsWith('/user-agent')) {
     // Respond with user-agent header value
     const userAgent = headers['user-agent'];
-    socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`);
+    socket.write(
+      `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
+    );
   } else if (path.startsWith('/files/')) {
     // Serve static files from the specified directory
     const directory = process.argv[3];
@@ -34,7 +42,9 @@ const handleGetRequest = (socket, path, headers) => {
     if (fs.existsSync(`${directory}/${filename}`)) {
       // Respond with file content if the file exists
       const content = fs.readFileSync(`${directory}/${filename}`);
-      socket.write(`HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${content.length}\r\n\r\n`);
+      socket.write(
+        `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${content.length}\r\n\r\n`
+      );
       socket.write(content);
     } else {
       // Respond with 404 Not Found if the file does not exist
