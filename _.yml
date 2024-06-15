@@ -1,0 +1,7 @@
+# Set this to true if you want debug logs.
+debug: true
+
+# Use this to change the JavaScript version used to run the code
+#
+# Available versions: nodejs-21
+language_pack: nodejs-21
